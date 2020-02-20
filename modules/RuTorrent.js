@@ -66,7 +66,7 @@ class RuTorrent {
         return true;
     }
 
-    async get(fields = []) {
+    async get() {
         const data = await this.callServer({
             path: "/plugins/httprpc/action.php",
             data: qs.stringify({ mode: "list" }),
