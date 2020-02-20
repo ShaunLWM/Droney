@@ -1,7 +1,7 @@
 const axios = require("axios");
 const qs = require("querystring");
 const FormData = require("form-data");
-const Torrent = require("./Torrent");
+const Utils = require("../lib/Utils");
 
 class RuTorrent {
     constructor(options = {}) {
@@ -72,8 +72,8 @@ class RuTorrent {
             data: qs.stringify({ mode: "list" }),
         });
 
-        return Object.keys(data.t).map((hashString) => {
-            return new Torrent().parse(hashString, data["t"][hashString]);
+        return Object.entries(data.t).map((value) => {
+            return Utils.parseTorrent({ type: "rutorrent", hash: value[0], data: value[1] });
         });
     }
 
