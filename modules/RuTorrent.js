@@ -48,6 +48,24 @@ class RuTorrent {
     });
   }
 
+  addMagnet(magnet, options = {}, fields = []) {
+    const formData = new FormData();
+    formData.append("url", magnet);
+    if (options.label) formData.append("label", options.label);
+    if (options.destination) formData.append("dir_edit", options.destination);
+    return new Promise((resolve, reject) => {
+      this.callServer({
+        path: "/php/addtorrent.php",
+        data: formData,
+        headers: formData.getHeaders()
+      }).then(() => {
+        return resolve();
+      }).catch(err => {
+        reject(err);
+      });
+    });
+  }
+
   addFile(file, options = {}, fields = []) {
     const formData = new FormData();
     formData.append("torrent_file", file, "torrent");
@@ -59,16 +77,13 @@ class RuTorrent {
         path: "/php/addtorrent.php",
         data: formData,
         headers: formData.getHeaders()
-      })
-        .then(() => {
-          return this.get(fields);
-        })
-        .then(data => {
-          resolve(data.pop());
-        })
-        .catch(err => {
-          reject(err);
-        });
+      }).then(() => {
+        return this.get(fields);
+      }).then(data => {
+        resolve(data.pop());
+      }).catch(err => {
+        reject(err);
+      });
     });
   }
 
