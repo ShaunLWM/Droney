@@ -22,9 +22,14 @@ class RuTorrent {
   callServer(options) {
     if (!options.type) options.type = "application/x-www-form-urlencoded";
     if (!options.headers) options.headers = {};
+    let method = "post";
+    if (options.method) method = options.method;
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await this.axios.post(options.path, options.data, {
+        const response = await this.axios({
+          url: options.path,
+          data: options.data,
+          method,
           responseType: "json",
           maxRedirects: 0,
           headers: {
@@ -46,6 +51,21 @@ class RuTorrent {
         return reject(err);
       }
     });
+  }
+
+  getDiskSpace() {
+    // https://github.com/kddige/rutorrentapi/blob/master/ruTorrentAPIpy/__init__.py
+    return new Promise((resolve, reject) => {
+      this.callServer({
+        path: "/plugins/diskspace/action.php",
+        method: "get"
+      }).then(() => {
+        return resolve();
+      }).catch(err => {
+        return reject(err);
+      });
+    });
+
   }
 
   addMagnet(magnet, options = {}, fields = []) {
