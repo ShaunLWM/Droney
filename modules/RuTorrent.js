@@ -59,8 +59,8 @@ class RuTorrent {
       this.callServer({
         path: "/plugins/diskspace/action.php",
         method: "get"
-      }).then(() => {
-        return resolve();
+      }).then(data => {
+        return resolve(data);
       }).catch(err => {
         return reject(err);
       });
