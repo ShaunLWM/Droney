@@ -171,6 +171,23 @@ class RuTorrent {
 
     return this.parseResponse(data);
   }
+
+  async getFiles(hash) {
+    const data = await this.callServer({
+      path: "/plugins/httprpc/action.php",
+      data: qs.stringify({ mode: "fls", hash })
+    });
+
+    return data.map(d => {
+      return {
+        name: d[0],
+        size: d[3],
+        completed_chunks: d[1],
+        size_chunks: d[2],
+        priority: d[4],
+      }
+    });
+  }
 }
 
 module.exports = RuTorrent;
