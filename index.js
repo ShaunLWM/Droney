@@ -1,3 +1,3 @@
 module.exports = {
-    RuTorrent: require("./modules/RuTorrent")
+  RuTorrent: require("./modules/RuTorrent")
 };
