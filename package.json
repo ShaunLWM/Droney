@@ -1,13 +1,20 @@
 {
 	"name": "droney",
-	"version": "0.0.1-beta.9",
+	"version": "0.0.1-alpha.1",
 	"main": "index.js",
 	"repository": "git@github.com:ShaunLWM/Droney.git",
 	"author": "ShaunLWM",
 	"license": "MIT",
 	"dependencies": {
-		"axios": "^0.21.1",
-		"form-data": "^3.0.0",
-		"querystring": "^0.2.0"
+		"xmlrpc": "^1.3.2"
+	},
+	"devDependencies": {
+		"@types/jest": "^26.0.22",
+		"@types/xmlrpc": "^1.3.6",
+		"dotenv": "^8.2.0",
+		"jest": "^26.6.3",
+		"jest-extended": "^0.11.5",
+		"ts-jest": "^26.5.4",
+		"typescript": "^4.2.3"
 	}
 }
