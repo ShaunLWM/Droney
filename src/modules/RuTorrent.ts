@@ -4,6 +4,7 @@ import type { RuTorrentOptions, RawTorrentObject, Torrent } from "../typings";
 
 export default class RuTorrent {
 	client: XMLRPC.Client;
+	version: number = -1;
 
 	constructor(options: RuTorrentOptions) {
 		// TODO: fix typings
@@ -27,7 +28,20 @@ export default class RuTorrent {
 		}
 
 		this.client = options.ssl ? XMLRPC.createSecureClient(xmlOptions) : XMLRPC.createClient(xmlOptions);
+		this.getVersion();
 	}
+
+	getVersion = async () => {
+		if (this.version === -1) {
+			try {
+				const versionObject = await this.makeRtorrentCall<string>("system.client_version", []);
+				const versionRaw: number[] = versionObject.split(".").map(Number);
+				this.version = versionRaw[0] * 10000 + versionRaw[1] * 100 + versionRaw[2];
+			} catch (e) {
+				this.version = 10000;
+			}
+		}
+	};
 
 	makeRtorrentCall = <T>(serverMethod: string, params: string[]): Promise<T> => {
 		return new Promise((resolve, reject) => {
