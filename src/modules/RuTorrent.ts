@@ -111,7 +111,7 @@ export default class RuTorrent {
 			return await this.makeRtorrentCall("load.start", ["", url]);
 		}
 
-		return await this.makeRtorrentCall("load_start", ["", url]);
+		return await this.makeRtorrentCall("load_start", [url]);
 	}
 
 	async remove(id: string, includeData = false) {
