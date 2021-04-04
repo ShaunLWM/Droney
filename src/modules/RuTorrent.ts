@@ -118,6 +118,7 @@ export default class RuTorrent {
 		if (includeData) {
 			await this.makeRtorrentCall("d.custom5.set", [id, "1"]);
 		}
+
 		return await this.makeRtorrentCall("d.erase", [id]);
 	}
 
