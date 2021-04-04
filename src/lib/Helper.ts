@@ -1,0 +1,2 @@
+export const XMLRPC_MINIMUM_SIZE = 2 * 1024 * 1024;
+export const XMLRPC_EXTRA_PADDING = 1280;

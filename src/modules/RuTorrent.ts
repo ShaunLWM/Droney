@@ -1,6 +1,8 @@
+import fs from "fs";
 import XMLRPC from "xmlrpc";
 import { TorrentStatus } from "../lib/Enums";
-import type { RuTorrentOptions, RawTorrentObject, Torrent } from "../typings";
+import { XMLRPC_EXTRA_PADDING, XMLRPC_MINIMUM_SIZE } from "../lib/Helper";
+import type { RawTorrentObject, RuTorrentOptions, Torrent } from "../typings";
 
 export default class RuTorrent {
 	client: XMLRPC.Client;
@@ -42,7 +44,7 @@ export default class RuTorrent {
 		}
 	};
 
-	makeRtorrentCall = <T>(serverMethod: string, params: string[]): Promise<T> => {
+	makeRtorrentCall = <T>(serverMethod: string, params: any[]): Promise<T> => {
 		return new Promise((resolve, reject) => {
 			this.client.methodCall(serverMethod, params, (error: Object, result: any) => {
 				if (error) return reject(error);
@@ -104,6 +106,20 @@ export default class RuTorrent {
 			"f.frozen_path=",
 		]);
 	}
+
+	addFile = async (filePath: string) => {
+		if (!fs.existsSync(filePath)) throw new Error("File not found: " + filePath);
+		await this.getVersion();
+		const file = fs.statSync(filePath);
+		const size = Math.max(file.size * 2 + XMLRPC_EXTRA_PADDING, XMLRPC_MINIMUM_SIZE);
+		if (this.version >= 904) {
+			await this.makeRtorrentCall("network.xmlrpc.size_limit.set", ["", `${size + XMLRPC_EXTRA_PADDING}`]);
+			await this.makeRtorrentCall("load.raw_start", ["", fs.readFileSync(filePath)]);
+		} else {
+			await this.makeRtorrentCall("set_xmlrpc_size_limit", ["", `${size + XMLRPC_EXTRA_PADDING}`]);
+			await this.makeRtorrentCall("load_raw_start", ["", fs.readFileSync(filePath)]);
+		}
+	};
 
 	async add(url: string) {
 		await this.getVersion();
