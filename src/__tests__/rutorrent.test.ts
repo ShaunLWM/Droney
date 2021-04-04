@@ -1,6 +1,7 @@
-import "jest-extended";
 import "dotenv/config";
+import "jest-extended";
 
+import path from "path";
 import RuTorrent from "../modules/RuTorrent";
 import type { Torrent } from "../typings";
 
@@ -33,5 +34,10 @@ describe("RUTorrent API", () => {
 	it("should return torrent details", async () => {
 		const torrent = await client.getTorrentDetails(torrents[0].hash);
 		expect(torrent).toBeDefined();
+	});
+
+	it("should upload simple torrent file", async () => {
+		const add = await client.addFile(path.join(__dirname, "./big-buck-bunny.torrent"));
+		expect(add).toBeUndefined();
 	});
 });
