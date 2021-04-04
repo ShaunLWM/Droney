@@ -28,7 +28,6 @@ export default class RuTorrent {
 		}
 
 		this.client = options.ssl ? XMLRPC.createSecureClient(xmlOptions) : XMLRPC.createClient(xmlOptions);
-		this.getVersion();
 	}
 
 	getVersion = async () => {
@@ -107,7 +106,12 @@ export default class RuTorrent {
 	}
 
 	async add(url: string) {
-		return await this.makeRtorrentCall("load.start", ["", url]);
+		await this.getVersion();
+		if (this.version > 904) {
+			return await this.makeRtorrentCall("load.start", ["", url]);
+		}
+
+		return await this.makeRtorrentCall("load_start", ["", url]);
 	}
 
 	async remove(id: string, includeData = false) {
