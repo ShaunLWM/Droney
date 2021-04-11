@@ -31,13 +31,20 @@ describe("RUTorrent API", () => {
 		expect(torrents).toBeArray();
 	});
 
-	it("should return torrent details", async () => {
-		const torrent = await client.getTorrentDetails(torrents[0].hash);
-		expect(torrent).toBeDefined();
+	it("should parse torrent details", async () => {
+		torrents = (await client.getTorrents()) as Torrent[];
+		let torrent = await client.getTorrentDetails(torrents[0].hash);
+		expect(torrent.trackers.length).toBeGreaterThan(0);
 	});
 
 	it("should upload simple torrent file", async () => {
 		const add = await client.addFile(path.join(__dirname, "./big-buck-bunny.torrent"));
 		expect(add).toBeUndefined();
+	});
+
+	fit("should get torrent file list", async () => {
+		torrents = (await client.getTorrents()) as Torrent[];
+		let torrent = await client.getFileList(torrents[0].hash);
+		console.log(torrent);
 	});
 });

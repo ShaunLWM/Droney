@@ -1,7 +1,8 @@
 import fs from "fs";
 import XMLRPC from "xmlrpc";
-import { TorrentStatus } from "../lib/Enums";
+import { Priority, TorrentStatus } from "../lib/Enums";
 import { XMLRPC_EXTRA_PADDING, XMLRPC_MINIMUM_SIZE } from "../lib/Helper";
+import { TorrentDetails } from "../models/TorrentDetails";
 import type { RawTorrentObject, RuTorrentOptions, Torrent } from "../typings";
 
 export default class RuTorrent {
@@ -89,8 +90,9 @@ export default class RuTorrent {
 		return torrents.map(this.parseTorrentData);
 	};
 
-	async getTorrentDetails(id: string) {
-		return await this.makeRtorrentCall("t.multicall", [id, "", "t.url="]);
+	async getTorrentDetails(id: string): Promise<TorrentDetails> {
+		const p = await this.makeRtorrentCall<string>("t.multicall", [id, "", "t.url="]);
+		return this.parseTorrentDetails(p);
 	}
 
 	async getFileList(id: string) {
@@ -261,4 +263,22 @@ export default class RuTorrent {
 			error: raw[18] ?? null,
 		};
 	};
+
+	parseTorrentDetails = (raw: string) => {
+		const trackers = raw.toString().split(",");
+		return new TorrentDetails(trackers);
+	};
+
+	convertPriority = (code: number) => {
+		switch (code) {
+			case 0:
+				return Priority.Off;
+			case 2:
+				return Priority.High;
+			default:
+				return Priority.Normal;
+		}
+	};
+
+	parseFilesInfo = () => {};
 }

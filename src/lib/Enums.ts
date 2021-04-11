@@ -5,3 +5,10 @@ export enum TorrentStatus {
 	Paused,
 	Queued,
 }
+
+export enum Priority {
+	Off,
+	Low,
+	Normal,
+	High,
+}
